@@ -1,13 +1,7 @@
-var gravityPower = 1000;
-
 var prevScore = 0;
 var topScore = 0;
 var gameOver = true;
 var timeRemaining = 60;
-
-
-
-
 
 class Vec
 {
@@ -47,7 +41,7 @@ class Box extends Rect
 {
   constructor()
   {
-    super(20,20);
+    super(30,30);
     this.vel = new Vec();
   }
 }
@@ -106,9 +100,10 @@ draw(){
     }
 
 update(dt) {
+  
     displayResults();
    if (gameOver === false){
-    timeRemaining = timeRemaining - 0.0175;
+    timeRemaining = timeRemaining - 0.01666666;
     displayResults();
    }
   if (timeRemaining <= 1){
@@ -119,17 +114,27 @@ update(dt) {
    this.food.vel.y = 0;
    }
    
-    this.box.pos.y += (this.box.vel.y * dt);
-    this.box.pos.x += (this.box.vel.x * dt);
-    this.food.pos.y += (this.food.vel.y * dt);
-    this.food.pos.x += (this.food.vel.x * dt);
-    
-    if(this.box.pos.y < this._canvas.height - this.box.size.x/2){
-    this.box.vel.y += (20);
-    }
+  
+  this.box.pos.y += (this.box.vel.y * dt);
+  this.box.pos.x += (this.box.vel.x * dt);
+  this.food.pos.y += (this.food.vel.y * dt);
+  this.food.pos.x += (this.food.vel.x * dt);
+     
     if(gameOver === false){
-    this.food.vel.y += (20);
+    this.box.vel.y += (15);
+   this.food.vel.y += (15);
+  var foodSpeed = 150;
+  var VecScale = ( ((this.box.pos.x-this.food.pos.x)**2 + (this.box.pos.y-this.food.pos.y)**2) )**0.5/foodSpeed;
+  this.food.vel.x = (this.box.pos.x-this.food.pos.x)/Math.abs(VecScale);
+  this.food.vel.y = (this.box.pos.y-this.food.pos.y)/Math.abs(VecScale);
+  
+  //console.log(VecScale);
+  //console.log(this.food.vel.y);
+  //console.log(this.food.vel.x);
+  console.log(((this.food.vel.x)**2 + (this.food.vel.y)**2)**0.5);
     }
+// this.food.vel.y = (this.box.pos.y - this.food.pos.y);
+// this.food.vel.x = (this.box.pos.x - this.food.pos.x);
     
     if (prevScore > topScore){
      topScore = prevScore;
@@ -140,16 +145,19 @@ update(dt) {
       prevScore += 1;
     }
     
-    if(this.box.right > this._canvas.width - 5 || this.box.left < 0) {
-      this.box.vel.x = -this.box.vel.x;
+    if(this.box.right > this._canvas.width - 5) {
+      this.box.vel.x = -1* Math.abs(this.box.vel.x);
+    }
+     if(this.box.left < 0) {
+      this.box.vel.x = Math.abs(this.box.vel.x);
     }
   
     if(this.box.top < 0) {
-      this.box.vel.y = -this.box.vel.y;
+      this.box.vel.y = Math.abs(this.box.vel.y);
     }
     if(this.box.bottom > this._canvas.height){
      this.box.pos.y =  this._canvas.height - this.box.size.x/2;
-     this.box.vel.y = -(this.box.vel.y * 0.8);
+     this.box.vel.y = -1* (Math.abs(this.box.vel.y * 0.8));
      this.box.vel.x = (this.box.vel.x * 0.8);
     }
     //////////
@@ -171,9 +179,10 @@ update(dt) {
     }else{
       document.onkeydown = null;
       }
-    // this.players[1].pos.y = this.ball.pos.y;
-    //this.players.forEach(player => this.collide(player, this.ball));
+      
+    
     this.draw();
+    
   }
 }
 
@@ -238,8 +247,8 @@ function startGame(){
 }
 
 function randomFoodPos(){
-  STUFF.food.pos.x = Math.floor(Math.random() * STUFF._canvas.width);
-  STUFF.food.pos.y = Math.floor(Math.random() * STUFF._canvas.height);
-  STUFF.food.vel.x = Math.floor(Math.random() * STUFF._canvas.width);
-  STUFF.food.vel.y = Math.floor(Math.random() * STUFF._canvas.height);
+  STUFF.food.pos.x = Math.floor(Math.random() * STUFF._canvas.width/2)+STUFF._canvas.width/4;
+  STUFF.food.pos.y = Math.floor(Math.random() * STUFF._canvas.height/2)+STUFF._canvas.width/4;
+ STUFF.food.vel.x = Math.floor(Math.random() * STUFF._canvas.width);
+ STUFF.food.vel.y = Math.floor(Math.random() * STUFF._canvas.height);
 }
